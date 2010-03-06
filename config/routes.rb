@@ -1,4 +1,6 @@
 SemanticHack::Application.routes.draw do |map|
+  resources :travels
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -7,6 +9,7 @@ SemanticHack::Application.routes.draw do |map|
   # Keep in mind you can assign values other than :controller and :action
 
   # Sample of named route:
+  match "show_results" => 'travels#show_results', :as => "show_results" 
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)
 
@@ -48,7 +51,7 @@ SemanticHack::Application.routes.draw do |map|
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  # root :to => "welcome#index"
+  root :to => "travels#new"
 
   # See how all your routes lay out with "rake routes"
 

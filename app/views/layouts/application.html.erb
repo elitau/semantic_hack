@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Travels: <%= controller.action_name %></title>
+<%# stylesheet_link_tag 'scaffold' %>
+<%= stylesheet_link_tag 'layout_styling_content' %>
+<%= javascript_include_tag :defaults %>
+<%= csrf_meta_tag %>
+
+<!-- (en) Add your meta data here -->
+<!-- (de) Fuegen Sie hier ihre Meta-Daten ein -->
+<!--[if lte IE 7]>
+<%= stylesheet_link_tag 'patches/patch_styling_content' %>
+<![endif]-->
+</head>
+<body>
+<ul id="skiplinks">
+	<li><a class="skip" href="#nav">Skip to navigation (Press Enter).</a></li>
+	<li><a class="skip" href="#col3">Skip to main content (Press Enter).</a></li>
+</ul>
+
+<div class="page_margins">
+  <div class="page">
+    <div id="header" role="banner">
+      <div id="topnav" role="contentinfo">
+        <span><a href="#">Login</a> | <a href="#">Contact</a> | <a href="#">Imprint</a></span>
+      </div>
+      <h1>Travel agent</h1>
+      <span>Where do you wanna go?</span>
+    </div>
+    <!-- begin: main navigation #nav -->
+    <div id="nav" role="navigation">
+      <div class="hlist">
+        <ul>
+          <li><%= link_to "Home", root_path %></li>
+          <li><a href="building_forms.html">Browse</a></li>
+          <!-- <li><a href="3col_standard.html">Previous Example</a></li> -->
+        </ul>
+      </div>
+    </div>
+    <!-- end: main navigation -->
+    <!-- begin: main content area #main -->
+    <div id="main">
+      <p class="notice"><%= notice %></p>
+      <!-- begin: #col1 - first float column -->
+      <div id="col1" role="complementary">
+        <div id="col1_content" class="clearfix">
+                                  <div class="info">
+          <h2>About this example </h2>
+          <p>In the main column you'll find all prestyled <a href="http://www.yaml.de/en/documentation/css-components/design-of-the-content.html">content elements</a> from <em>yaml/screen/content_default.css</em>.</p>
+          <p><strong>quick jump to ...</strong></p>
+          <ul>
+            <li><a href="#headings">Heading Levels</a></li>
+              <li><a href="#paragraphs">Paragraphs</a></li>
+              <li><a href="#blockquotes">Blockquotes</a></li>
+              <li><a href="#pre">Preformatted text</a></li>
+              <li><a href="#inline">Inline Text Decoration</a></li>
+              <li><a href="#lists">Lists</a></li>
+              <li><a href="#floatpos">Text &amp; Images</a></li>
+              <li><a href="#tables">Tables</a></li>
+          </ul>
+        </div>
+        </div>
+      </div>
+      <!-- end: #col1 -->
+      <!-- begin: #col3 static column -->
+      <div id="col3" role="main">
+        <div id="col3_content" class="clearfix">
+          <%= yield %>
+        <div id="ie_clearing">&nbsp;</div>
+        <!-- End: IE Column Clearing -->
+      </div>
+      
+      
+      
+      
+      <!-- end: #col3 -->
+    </div>
+    <!-- end: #main -->
+    <!-- begin: #footer -->
+    <div id="footer" role="contentinfo">Footer with copyright notice and status information<br />
+Layout based on <a href="http://www.yaml.de/">YAML</a></div>
+    <!-- end: #footer -->
+  </div>
+</div>
+<!-- full skiplink functionality in webkit browsers -->
+<%= javascript_include_tag "/yaml/core/js/yaml-focusfix.js" %>
+</body>
+</html>

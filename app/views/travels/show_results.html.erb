@@ -1,0 +1,31 @@
+<h1>Travel info for <%= @travel.place %></h1>
+
+<div id="map">
+  <iframe width="425" height="350" frameborder="0" 
+  scrolling="no" marginheight="0" marginwidth="0" 
+  src="http://labs.metacarta.com/osm/embed.html?lat=51.159&lon=4.638&zoom=12&marker=1"></iframe>
+</div>
+
+<table>
+  <!-- <tr>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr> -->
+
+<% @travel.images.each do |image| %>
+  <tr>
+    <td>
+      <%= link_to image.title, image.url %> <br/>
+      <%= @travel.abstract %>
+    </td>
+    <td>
+      <%= link_to image_tag(image.thumbnail_url), image.url %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New search', new_travel_path %>

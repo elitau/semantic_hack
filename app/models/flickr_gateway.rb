@@ -62,7 +62,7 @@ end
 
 module DirectFlickrApi
   def small_url
-    self.url_s
+    self.try(:url_s) or self.try(:url_t) or self.try(:url_m)
   end
   
   def url

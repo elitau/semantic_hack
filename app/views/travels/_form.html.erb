@@ -1,0 +1,14 @@
+<% form_tag show_results_path, :class => "yform" do %>
+  <%# f.error_messages %>
+  <fieldset>
+    <!-- <legend>Place</legend> -->
+    <div class="type-text">
+      <label for="place">Place</label>
+      <input type="text" name="place" id="place" size="20" />
+    </div>
+  </fieldset>
+  
+  <div class="actions">
+    <%= submit_tag "Search" %>
+  </div>
+<% end %>
