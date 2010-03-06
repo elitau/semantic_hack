@@ -4,10 +4,23 @@ class FlickrGateway
   
   def self.search_for_geoname(geoname)
     images = local_search_for_geoname(geoname)
-    if images.empty?
+    if images.empty? and not geoname.found_images == 0
       sleep(1.2) if @last_request_at > Time.now - 1.5.seconds
       @last_request_at = Time.now
-      images = flickr_search_with_lat_long(geoname.latitude, geoname.longitude)
+      tries = 0
+      images = []
+      while tries <= 3
+        begin
+          images = FlickrGateway.flickr_search_with_lat_long(geoname.latitude, geoname.longitude)
+          break
+        rescue Errno::EHOSTDOWN => e
+          puts "#{e.backtrace}"
+          sleep(50)
+          tries += 1
+          []
+        end
+      end
+      
       create_local_db_images(images, geoname)
       images
     end
@@ -37,6 +50,9 @@ class FlickrGateway
   end
 
   def self.create_local_db_images(images, geoname)
+    geoname.last_flickr_check = Time.now
+    geoname.found_images = images.size
+    geoname.save
     images.each do |image|
       Image.create(:flickr_data => image.to_hash, :geoname_id => geoname.geoname_id)
     end
