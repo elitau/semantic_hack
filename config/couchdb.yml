@@ -1,0 +1,3 @@
+development: semantic_hack
+test: semantic_hack_test
+production: http://db.server/production_db_name

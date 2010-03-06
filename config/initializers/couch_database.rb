@@ -1,0 +1,1 @@
+CouchPotato::Config.database_name = 'semantic_hack'

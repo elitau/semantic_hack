@@ -2,10 +2,10 @@
 source 'http://gemcutter.org'
 
 
-gem "rails", "3.0.0.beta"
+# gem "rails", "3.0.0.beta"
 
 ## Bundle edge rails:
-# gem "rails", :git => "git://github.com/rails/rails.git"
+gem "rails", :git => "git://github.com/rails/rails.git"
 
 # ActiveRecord requires a database adapter. By default,
 # Rails has selected sqlite3.
@@ -16,6 +16,9 @@ gem "rails", "3.0.0.beta"
 # gem "hpricot", "0.6"
 # gem "sqlite3-ruby", :require => "sqlite3"
 # gem "aws-s3", :require => "aws/s3"
+gem "flickraw"
+gem "couch_potato"
+gem "mysql"
 
 ## Bundle gems used only in certain environments:
 # gem "rspec", :group => :test
