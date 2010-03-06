@@ -6,17 +6,13 @@ def create_flickr_place_rdf(geoname, images)
   end.join("\n        ")
   
   %Q{
-    <owl:Thing rdf:about="##{place_id(geoname)}">
+    <owl:Thing rdf:about="##{geoname.place_id}">
         <rdf:type rdf:resource="#Place"/>
         <hasName>#{geoname.name}</hasName>
         <owl:sameAs rdf:resource="http://sws.geonames.org/#{geoname.geoname_id}/"/>
         #{image_triples}
     </owl:Thing>
   }
-end
-
-def place_id(geoname)
-  "#{geoname.asciiname.parameterize}-#{geoname.id}"
 end
 
 def image_id(image)
@@ -28,7 +24,7 @@ def create_flickr_image_rdf(geoname, images)
     %Q{
       <Image rdf:about="##{image_id(image)}">
           <rdf:type rdf:resource="&owl;Thing"/>
-          <takenIn rdf:resource="##{place_id(geoname)}"/>
+          <takenIn rdf:resource="##{geoname.place_id}"/>
           <hasName>#{image.title}</hasName>
           <foaf:page rdf:resource="#{image.url}"/>
           <foaf:depiction rdf:resource="#{image.small_url}"/>

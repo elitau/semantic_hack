@@ -28,8 +28,18 @@
       <div id="topnav" role="contentinfo">
         <span><a href="#">Login</a> | <a href="#">Contact</a> | <a href="#">Imprint</a></span>
       </div>
-      <h1>Travel agent</h1>
-      <span>Where do you wanna go?</span>
+      <div class="subcolumns">
+        <div class="c25l">
+          <h1>Travel agent</h1>
+          <span>Where do you wanna go?</span>
+        </div>
+        <div class="c50l">
+        </div>
+        <div class="c25r">
+          <%= render :partial => "travels/form" %>
+        </div>
+        
+      </div>
     </div>
     <!-- begin: main navigation #nav -->
     <div id="nav" role="navigation">
@@ -45,39 +55,9 @@
     <!-- begin: main content area #main -->
     <div id="main">
       <p class="notice"><%= notice %></p>
-      <!-- begin: #col1 - first float column -->
-      <div id="col1" role="complementary">
-        <div id="col1_content" class="clearfix">
-                                  <div class="info">
-          <h2>About this example </h2>
-          <p>In the main column you'll find all prestyled <a href="http://www.yaml.de/en/documentation/css-components/design-of-the-content.html">content elements</a> from <em>yaml/screen/content_default.css</em>.</p>
-          <p><strong>quick jump to ...</strong></p>
-          <ul>
-            <li><a href="#headings">Heading Levels</a></li>
-              <li><a href="#paragraphs">Paragraphs</a></li>
-              <li><a href="#blockquotes">Blockquotes</a></li>
-              <li><a href="#pre">Preformatted text</a></li>
-              <li><a href="#inline">Inline Text Decoration</a></li>
-              <li><a href="#lists">Lists</a></li>
-              <li><a href="#floatpos">Text &amp; Images</a></li>
-              <li><a href="#tables">Tables</a></li>
-          </ul>
-        </div>
-        </div>
-      </div>
-      <!-- end: #col1 -->
-      <!-- begin: #col3 static column -->
-      <div id="col3" role="main">
-        <div id="col3_content" class="clearfix">
-          <%= yield %>
-        <div id="ie_clearing">&nbsp;</div>
-        <!-- End: IE Column Clearing -->
-      </div>
-      
-      
-      
-      
-      <!-- end: #col3 -->
+
+      <%= yield %>
+
     </div>
     <!-- end: #main -->
     <!-- begin: #footer -->

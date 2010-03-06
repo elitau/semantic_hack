@@ -1,7 +1,7 @@
 class Travel
   NG4J_EXECUTABLE_PATH = "/Users/ede/Documents/Master/20_SemanticWPF/tools/ng4j-0.9.2/bin/semwebquery"
   
-  attr_reader :place, :time, :abstract, :images, :result, :query, :raw_result
+  attr_reader :place, :time, :abstract, :images, :result, :query, :raw_result, :place_name, :geoname
   
   def initialize(params = {})
     @place = params[:place] or params["place"]
@@ -17,8 +17,20 @@ class Travel
     self
   end
   
+  def place_id
+    @geoname = Geoname.where("name LIKE ?", "%#{@place}%").first
+    if @geoname
+      @place_name = @geoname.name
+      return @geoname.place_id
+    else
+      return nil
+    end
+  end
+  
   def extract_abstract(processed_result)
     @abstract = processed_result["results"]["bindings"].first["abstract"]["value"]
+  rescue NoMethodError
+    return nil
   end
   
   def extract_images(processed_result)
@@ -46,10 +58,10 @@ class Travel
   def select_part_of_query
     "SELECT DISTINCT *
      WHERE {
-       flickr:#{@place} flickr:hasImage ?image .
+       flickr:#{place_id} flickr:hasImage ?image .
      	 ?image flickr:hasName ?image_title .
      	 ?image foaf:depiction ?depiction .
-     	 flickr:#{@place} owl:sameAs ?other_place .
+     	 flickr:#{place_id} owl:sameAs ?other_place .
      	 OPTIONAL { 
      	 	?other_place owl:sameAs ?third_place .
      	 	?third_place dbpp:abstract ?abstract .

@@ -1,31 +1,53 @@
-<h1>Travel info for <%= @travel.place %></h1>
+<div class="page_margins">
+  <div class="page">
+     <div class="subcolumns">
 
-<div id="map">
-  <iframe width="425" height="350" frameborder="0" 
-  scrolling="no" marginheight="0" marginwidth="0" 
-  src="http://labs.metacarta.com/osm/embed.html?lat=51.159&lon=4.638&zoom=12&marker=1"></iframe>
+       <div class="c50r">
+         <div class="subcr">
+           <!-- Insert your subtemplate content here -->
+           <h3><%= @travel.place_name %></h3>
+           <div class="info">
+             <p><%= @travel.abstract %></p>
+           </div>
+         </div>
+       </div>
+       <%- if geoname = @travel.geoname -%>
+         <div class="c50l">
+           <div class="subcl">
+             <div id="map">
+               <iframe width="425" height="350" frameborder="0" 
+               scrolling="no" marginheight="0" marginwidth="0" 
+               src="http://labs.metacarta.com/osm/embed.html?lat=<%= geoname.latitude %>&lon=<%= geoname.longitude %>&zoom=8&marker=1"></iframe>
+             </div>
+           </div>
+         </div>
+       <%- end -%>
+     </div>
+  </div>
 </div>
 
-<table>
-  <!-- <tr>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr> -->
 
-<% @travel.images.each do |image| %>
-  <tr>
-    <td>
-      <%= link_to image.title, image.url %> <br/>
-      <%= @travel.abstract %>
-    </td>
-    <td>
-      <%= link_to image_tag(image.thumbnail_url), image.url %>
-    </td>
-  </tr>
-<% end %>
-</table>
+<div class="page_margins">
+  <div class="page">
+     <div class="subcolumns equalize">
 
-<br />
+       <% @travel.images.each do |image| %>
+         <div class="c25l">
+           <div class="subcr">
+             <!-- Insert your subtemplate content here -->
+             <div class="info">
+               <h3><%= image.title %></h3>
+               <%= link_to image.title, image.url %>
+               <p>
+                 <%= link_to image_tag(image.thumbnail_url), image.url %>
+               </p>
+             </div>
+           </div>
+         </div>
+       <% end %>
+
+     </div>
+  </div>
+</div>
 
 <%= link_to 'New search', new_travel_path %>
