@@ -1,7 +1,7 @@
 class CreateGeonames < ActiveRecord::Migration
   def self.up
     create_table :geonames do |t|
-      t.integer :geoname_id
+      t.integer :geonameid
       t.string :name              # name of geographical point (utf8) varchar(200)
       t.string :asciiname         # name of geographical point in plain ascii characters, varchar(200)
       # t.string :alternatenames    # alternatenames, comma separated varchar(5000)
