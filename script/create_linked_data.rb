@@ -2,13 +2,13 @@
 
 def create_flickr_place_rdf(geoname, images)
   image_triples = images.map do |image|
-    "<hasImage rdf:resource=\"##{image_id(image)}\"/>"
+    "<hasImage rdf:resource=\"#{image_id(image)}\"/>"
   end.join("\n        ")
   
   %Q{
-    <owl:Thing rdf:about="##{geoname.place_id}">
-        <rdf:type rdf:resource="#Place"/>
-        <hasName>#{geoname.name}</hasName>
+    <owl:Thing rdf:about="#{geoname.place_id}">
+        <rdf:type rdf:resource="Place"/>
+        <hasName>#{escape_xml(geoname.name)}</hasName>
         <owl:sameAs rdf:resource="http://sws.geonames.org/#{geoname.geoname_id}/"/>
         #{image_triples}
     </owl:Thing>
@@ -22,15 +22,33 @@ end
 def create_flickr_image_rdf(geoname, images)
   images.map do |image|
     %Q{
-      <Image rdf:about="##{image_id(image)}">
-          <rdf:type rdf:resource="&owl;Thing"/>
-          <takenIn rdf:resource="##{geoname.place_id}"/>
-          <hasName>#{image.title}</hasName>
+      <Image rdf:about="#{image_id(image)}">
+          <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+          <takenIn rdf:resource="#{geoname.place_id}"/>
+          <hasName>#{escape_xml(image.title)}</hasName>
           <foaf:page rdf:resource="#{image.url}"/>
           <foaf:depiction rdf:resource="#{image.small_url}"/>
       </Image>
     }
   end.to_s
+end
+
+
+def escape_xml(input)
+   # all kinds of other processing of input simulated by the input.dup
+   result = input.dup
+
+   result.gsub!(/[&<>'"]/) do | match |
+     case match
+     when '&' then return '&amp;'
+     when '<' then return '&lt;'
+     when '>' then return '&gt;'
+     when "'" then return '&apos;'
+     when '"' then return '&quote;'
+     end
+   end
+
+   return result
 end
 
 def create_places_and_images
@@ -97,9 +115,10 @@ def rdf_head
          <!ENTITY foaf "http://xmlns.com/foaf/0.1/" >
          <!ENTITY dbpo "http://dbpedia.org/ontology/" >
      ]>
-     
+
+
      <rdf:RDF xmlns="http://localhost:8080/flickr/"
-          xml:base="http://www.neuezone.org/2009/11/17/flickr.owl"
+          xml:base="http://localhost:8080/flickr/"
           xmlns:flickr="http://localhost:8080/flickr/"
           xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
           xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
