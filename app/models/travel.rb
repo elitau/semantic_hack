@@ -8,10 +8,10 @@ class Travel
   end
   
   def search
-    Rails.logger.debug "Executing SPARQL Query: \n#{query}"
+    Rails.logger.error "Executing SPARQL Query: \n#{query}"
     command = "#{NG4J_EXECUTABLE_PATH} -sparql \"#{query}\" -maxsteps 6 -resultfmt JSON"
     @raw_result = execute_command(command)
-    Rails.logger.debug "Query result: \n#{raw_result}"
+    Rails.logger.error "Query result: \n#{raw_result}"
     processed_result = process_result(raw_result)
     extract_images(processed_result)
     extract_abstract(processed_result)
