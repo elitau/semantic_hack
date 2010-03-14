@@ -1,6 +1,5 @@
 class Travel
-  NG4J_EXECUTABLE_PATH = "/Users/ede/Documents/Master/20_SemanticWPF/tools/ng4j-0.9.2/bin/semwebquery"
-  
+
   attr_reader :place, :time, :abstract, :images, :result, :query, :raw_result, :place_name, :geoname
   
   def initialize(params = {})
@@ -9,8 +8,10 @@ class Travel
   end
   
   def search
-    command = "#{NG4J_EXECUTABLE_PATH} -sparql \"#{build_query}\" -maxsteps 6 -resultfmt JSON"
+    Rails.logger.debug "Executing SPARQL Query: \n#{query}"
+    command = "#{NG4J_EXECUTABLE_PATH} -sparql \"#{query}\" -maxsteps 6 -resultfmt JSON"
     @raw_result = execute_command(command)
+    Rails.logger.debug "Query result: \n#{raw_result}"
     processed_result = process_result(raw_result)
     extract_images(processed_result)
     extract_abstract(processed_result)
@@ -51,8 +52,8 @@ class Travel
     `#{command}`
   end
   
-  def build_query
-    @query = namespaces_for_query + select_part_of_query
+  def query
+    @query ||= namespaces_for_query + select_part_of_query
   end
   
   def select_part_of_query
