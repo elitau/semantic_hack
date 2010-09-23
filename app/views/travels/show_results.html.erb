@@ -1,3 +1,32 @@
+<%- content_for :script do -%>
+  <style type="text/css">
+        #map {
+            width: 425px;
+            height: 350px;
+            margin: 0;
+        }
+      </style>
+      <%= javascript_include_tag "OpenLayers" %>
+      <script>
+        function render_map() {
+          map = new OpenLayers.Map("map");
+          var mapnik = new OpenLayers.Layer.OSM();
+          map.addLayer(mapnik);
+          latitude = $("map").readAttribute("data-lat");
+          longitude = $("map").readAttribute("data-long");
+          map.setCenter(new OpenLayers.LonLat(longitude,latitude) // Center of the map
+            .transform(
+              new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+              new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+            ), 9 // Zoom level
+          );
+        }
+        document.observe("dom:loaded", function() {
+          // initially hide all containers for tab content
+          render_map();
+        });
+      </script>
+<%- end -%>
 <div class="page_margins">
   <div class="page">
      <div class="subcolumns">
@@ -14,10 +43,10 @@
        <%- if geoname = @travel.geoname -%>
          <div class="c50l">
            <div class="subcl">
-             <div id="map">
-               <iframe width="425" height="350" frameborder="0" 
+             <div id="map" data-lat="<%= geoname.latitude %>" data-long="<%= geoname.longitude %>">
+               <!-- <iframe width="425" height="350" frameborder="0" 
                scrolling="no" marginheight="0" marginwidth="0" 
-               src="http://labs.metacarta.com/osm/embed.html?lat=<%= geoname.latitude %>&lon=<%= geoname.longitude %>&zoom=8&marker=1"></iframe>
+               src="http://labs.metacarta.com/osm/embed.html?lat=<%= geoname.latitude %>&lon=<%= geoname.longitude %>&zoom=8&marker=1"></iframe> -->
              </div>
            </div>
          </div>

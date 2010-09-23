@@ -1,6 +1,6 @@
 class Travel
 
-  attr_reader :place, :time, :abstract, :images, :result, :query, :raw_result, :place_name, :geoname
+  attr_reader :place, :time, :abstract, :images, :result, :query, :raw_json_result, :place_name, :geoname
   
   def initialize(params = {})
     @place = params[:place] or params["place"]
@@ -9,19 +9,19 @@ class Travel
   
   def search
     Rails.logger.error "Executing SPARQL Query: \n#{query}"
-    command = "#{NG4J_EXECUTABLE_PATH} -sparql \"#{query}\" -maxsteps 6 -resultfmt JSON"
-    @raw_result = execute_command(command)
-    Rails.logger.error "Query result: \n#{raw_result}"
-    processed_result = process_result(raw_result)
+    uri = URI.parse("http://localhost:8890/sparql")
+    @raw_json_result = query_with_http_sparql_service(query, uri)
+    # @raw_json_result = execute_command(query)
+    Rails.logger.error "Query result: \n#{raw_json_result}"
+    processed_result = process_result(raw_json_result)
     extract_images(processed_result)
     extract_abstract(processed_result)
     self
   end
   
   def place_id
-    @geoname = Geoname.where("name LIKE ?", "%#{@place}%").first
-    if @geoname
-      @place_name = @geoname.name
+    if geoname
+      @place_name = geoname.name
       return @geoname.place_id
     else
       return nil
@@ -29,7 +29,7 @@ class Travel
   end
   
   def extract_abstract(processed_result)
-    @abstract = processed_result["results"]["bindings"].first["abstract"]["value"]
+    @abstract = processed_result["results"]["bindings"].first["comment"]["value"]
   rescue NoMethodError
     return nil
   end
@@ -44,12 +44,41 @@ class Travel
     end
   end
   
-  def process_result(raw_result)
-    @result = JSON.parse(raw_result)
+  def abstract
+    @abstract ||= query_abstract_from_dbpedia(geoname)
   end
   
-  def execute_command(command)
+  def geoname
+    @geoname ||= Geoname.where("name LIKE ?", "%#{@place}%").first
+  end
+  
+  def query_abstract_from_dbpedia(geoname)
+    uri = URI.parse("http://dbpedia.org/sparql")
+    query = "SELECT DISTINCT *
+     WHERE {
+       ?s owl:sameAs <#{geoname.resource_url}> .
+       ?s rdfs:comment ?comment .
+     	 FILTER langMatches( lang(?comment), 'en') .
+    }"
+    json = JSON.parse(query_with_http_sparql_service(query, uri))
+    extract_abstract json
+  end
+  
+  def process_result(raw_json_result)
+    @result = JSON.parse(raw_json_result)
+  end
+  
+  def execute_command(query)
+    command = "#{NG4J_EXECUTABLE_PATH} -sparql \"#{query}\" -maxsteps 6 -resultfmt JSON"
+    Rails.logger.info "========================================="
+    Rails.logger.info "Executing command on console: #{command}"
+    Rails.logger.info "========================================="
     `#{command}`
+  end
+  
+  def query_with_http_sparql_service(query, uri)
+    res = Net::HTTP.post_form(uri, 'query' => query, 'format' => "application/sparql-results+json")
+    res.body
   end
   
   def query

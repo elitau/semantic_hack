@@ -4,4 +4,8 @@ class Geoname < ActiveRecord::Base
     "#{self.asciiname.parameterize}-#{self.id}"
   end
   
+  def resource_url
+    "http://sws.geonames.org/#{geoname_id}/"
+  end
+  
 end
