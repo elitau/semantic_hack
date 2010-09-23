@@ -28,8 +28,8 @@ class Travel
     end
   end
   
-  def extract_abstract(processed_result)
-    @abstract = processed_result["results"]["bindings"].first["comment"]["value"]
+  def extract_value(processed_result, value_name)
+    processed_result["results"]["bindings"].first[value_name]["value"]
   rescue NoMethodError
     return nil
   end
@@ -44,37 +44,87 @@ class Travel
     end
   end
   
-  def abstract
-    @abstract ||= geoname ? query_abstract_from_dbpedia(geoname) : nil
-  end
-  
+  # def wikipedia_link
+  #   @wikipedia_link ||= extract_value(query_data_from_dbpedia, "wikipedia_link")
+  # end
+  # 
+  # def abstract
+  #   @abstract ||= extract_value(query_data_from_dbpedia, "comment")
+  # end
+  # 
+  # def homepage_of_city
+  #   @homepage_of_city ||= extract_value(query_data_from_dbpedia, "homepage_of_city")
+  # end
+  # 
   def geoname
     @geoname ||= @place and Geoname.where("name LIKE ?", "#{@place}").first
   end
+  # 
+  # DBPEDIA_PROPERTIES = {
+  #   'population_total' => 'dbpo:populationTotal',
+  #   'region'           => 'dbpo:region',
+  #   'wikipedia_link'   => 'foaf:page',
+  #   'homepage_of_city' => 'foaf:homepage',
+  #   'abstract'         => 'rdfs:comment',
+  #   'region_name'      => 'rdfs:comment',
+  #   'thumbnail_url'    => 'foaf:depiction'
+  # }
+  class Triple
+    attr_reader :subjekt, :praedikat, :objekt, :create_method
+    def initialize(subjekt, praedikat, objekt, create_method = true)
+      @subjekt = subjekt
+      @praedikat = praedikat
+      @objekt = objekt
+      @create_method = create_method
+    end
+  end
   
-  def query_abstract_from_dbpedia(geoname)
-    uri = URI.parse("http://dbpedia.org/sparql")
-    query = "SELECT DISTINCT *
+  DBPEDIA_PROPERTIES = [
+    Triple.new('?o', 'dbpo:populationTotal' , 'population_total'),
+    Triple.new('?o', 'foaf:page'            , 'wikipedia_link'  ),
+    Triple.new('?o', 'foaf:homepage'        , 'homepage_of_city'),
+    # Triple.new('?o', 'dbpo:region'          , 'r'                , false),
+    # Triple.new('?r', 'rdfs:comment'         , 'region_name'     ),
+    Triple.new('?o', 'rdfs:comment'         , 'abstract'        ),
+    Triple.new('?o', 'foaf:depiction'       , 'thumbnail_url'   ),
+  ]
+  
+  def dbpedia_properties
+    DBPEDIA_PROPERTIES.map{|triple| "OPTIONAL {#{triple.subjekt} #{triple.praedikat} ?#{triple.objekt} .\n}"}
+  end
+  
+  DBPEDIA_PROPERTIES.each do |triple|
+    define_method(triple.objekt) do
+      extract_value(query_data_from_dbpedia, triple.objekt)
+    end if triple.create_method
+  end
+  
+  def query_data_from_dbpedia
+    @dbpedia_json ||= geoname and begin
+      uri = URI.parse("http://dbpedia.org/sparql")
+      JSON.parse(query_with_http_sparql_service(namespaces_for_query + dbpedia_query, uri))
+    end
+  end
+  
+  def dbpedia_query
+    "SELECT DISTINCT *
      WHERE {
-       ?s owl:sameAs <#{geoname.resource_url}> .
-       ?s rdfs:comment ?comment .
-     	 FILTER langMatches( lang(?comment), 'en') .
+       ?o owl:sameAs <#{geoname.resource_url}> .
+       #{dbpedia_properties} FILTER langMatches( lang(?abstract), 'en') .
     }"
-    json = JSON.parse(query_with_http_sparql_service(query, uri))
-    extract_abstract json
   end
   
   def process_result(raw_json_result)
     @result = JSON.parse(raw_json_result)
   end
   
-  def execute_command(query)
-    command = "#{NG4J_EXECUTABLE_PATH} -sparql \"#{query}\" -maxsteps 6 -resultfmt JSON"
-    Rails.logger.info "========================================="
-    Rails.logger.info "Executing command on console: #{command}"
-    Rails.logger.info "========================================="
-    `#{command}`
-  end
+  # def execute_command(query)
+  #   command = "#{NG4J_EXECUTABLE_PATH} -sparql \"#{query}\" -maxsteps 6 -resultfmt JSON"
+  #   Rails.logger.info "========================================="
+  #   Rails.logger.info "Executing command on console: #{command}"
+  #   Rails.logger.info "========================================="
+  #   `#{command}`
+  # end
   
   def query_with_http_sparql_service(query, uri)
     res = Net::HTTP.post_form(uri, 'query' => query, 'format' => "application/sparql-results+json")

@@ -34,7 +34,15 @@
        <div class="c50r">
          <div class="subcr">
            <!-- Insert your subtemplate content here -->
-           <h3><%= @travel.place_name %></h3>
+           <h3>
+            <%= link_to @travel.place_name, @travel.homepage_of_city %>
+            <%= link_to image_tag("wikipedia_icon.gif", :alt => "Wikipedia", :width => "20"), @travel.wikipedia_link %>
+          </h3>
+           <%- if @travel.thumbnail_url -%>
+             <div class="info">
+               <p><%= image_tag(@travel.thumbnail_url, :height => "207", :alt => "Bild von #{@travel.place_name}") %></p>
+             </div>
+           <%- end -%>
            <div class="info">
              <p><%= @travel.abstract %></p>
            </div>
@@ -78,5 +86,3 @@
      </div>
   </div>
 </div>
-
-<%= link_to 'New search', new_travel_path %>
