@@ -45,7 +45,7 @@ class Travel
   end
   
   def abstract
-    @abstract ||= query_abstract_from_dbpedia(geoname)
+    @abstract ||= geoname ? query_abstract_from_dbpedia(geoname) : nil
   end
   
   def geoname
