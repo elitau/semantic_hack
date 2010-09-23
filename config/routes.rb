@@ -1,5 +1,6 @@
 SemanticHack::Application.routes.draw do |map|
   resources :travels
+  resources :geonames
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -9,7 +10,7 @@ SemanticHack::Application.routes.draw do |map|
   # Keep in mind you can assign values other than :controller and :action
 
   # Sample of named route:
-  match "show_results" => 'travels#show_results', :as => "show_results" 
+  match "search" => 'travels#search', :as => "search" 
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)
 

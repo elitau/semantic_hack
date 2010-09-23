@@ -13,11 +13,15 @@ class TravelsController < ApplicationController
   # GET /travels/1
   # GET /travels/1.xml
   def show
-    @travel = Travel.find(params[:id])
-
+    @travel = Travel.new(:place => params[:id])
     respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @travel }
+      if @travel.search
+        format.html # show.html.erb
+        format.xml  { render :xml => @travel, :status => :created, :location => @travel }
+      else
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @travel.errors, :status => :unprocessable_entity }
+      end
     end
   end
 
@@ -39,12 +43,12 @@ class TravelsController < ApplicationController
 
   # POST /travels
   # POST /travels.xml
-  def show_results
+  def search
     @travel = Travel.new(params)
-
+    
     respond_to do |format|
-      if @travel.search
-        format.html #{ redirect_to(@travel, :notice => 'Travel was successfully created.') }
+      if @travel.geoname
+        format.html { redirect_to travel_path(@travel.geoname.name) }
         format.xml  { render :xml => @travel, :status => :created, :location => @travel }
       else
         format.html { render :action => "new" }

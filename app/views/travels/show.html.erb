@@ -1,3 +1,83 @@
+<%- content_for :script do -%>
+  <style type="text/css">
+        #map {
+            width: 425px;
+            height: 350px;
+            margin: 0;
+        }
+      </style>
+      <!-- // <script src="http://www.openlayers.org/api/OpenLayers.js"></script> -->
+      <%= javascript_include_tag "OpenLayers" %>
+      <script>
+        function render_map() {
+          map = new OpenLayers.Map("map");
+          var mapnik = new OpenLayers.Layer.OSM();
+          map.addLayer(mapnik);
+          latitude = $("map").readAttribute("data-lat");
+          longitude = $("map").readAttribute("data-long");
+          map.setCenter(new OpenLayers.LonLat(longitude,latitude) // Center of the map
+            .transform(
+              new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+              new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+            ), 9 // Zoom level
+          );
+        }
+        document.observe("dom:loaded", function() {
+          // initially hide all containers for tab content
+          render_map();
+        });
+      </script>
+<%- end -%>
+<div class="page_margins">
+  <div class="page">
+     <div class="subcolumns">
 
-<%= link_to 'Edit', edit_travel_path(@travel) %> |
-<%= link_to 'Back', travels_path %>
+       <div class="c50r">
+         <div class="subcr">
+           <!-- Insert your subtemplate content here -->
+           <h3><%= @travel.place_name %></h3>
+           <div class="info">
+             <p><%= @travel.abstract %></p>
+           </div>
+         </div>
+       </div>
+       <%- if geoname = @travel.geoname -%>
+         <div class="c50l">
+           <div class="subcl">
+             <div id="map" data-lat="<%= geoname.latitude %>" data-long="<%= geoname.longitude %>">
+               <!-- <iframe width="425" height="350" frameborder="0" 
+               scrolling="no" marginheight="0" marginwidth="0" 
+               src="http://labs.metacarta.com/osm/embed.html?lat=<%= geoname.latitude %>&lon=<%= geoname.longitude %>&zoom=8&marker=1"></iframe> -->
+             </div>
+           </div>
+         </div>
+       <%- end -%>
+     </div>
+  </div>
+</div>
+
+
+<div class="page_margins">
+  <div class="page">
+     <div class="subcolumns equalize">
+
+       <% @travel.images.each do |image| %>
+         <div class="c25l">
+           <div class="subcr">
+             <!-- Insert your subtemplate content here -->
+             <div class="info">
+               <h3><%= image.title %></h3>
+               <%= link_to image.title, image.url %>
+               <p>
+                 <%= link_to image_tag(image.thumbnail_url), image.url %>
+               </p>
+             </div>
+           </div>
+         </div>
+       <% end %>
+
+     </div>
+  </div>
+</div>
+
+<%= link_to 'New search', new_travel_path %>

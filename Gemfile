@@ -20,6 +20,7 @@ gem "couch_potato"
 gem "mysql"
 # gem "activerdf_net7"
 gem "validatable"
+gem "will_paginate"
 
 ## Bundle gems used only in certain environments:
 # gem "rspec", :group => :test

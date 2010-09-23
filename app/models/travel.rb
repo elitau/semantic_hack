@@ -1,9 +1,9 @@
 class Travel
 
-  attr_reader :place, :time, :abstract, :images, :result, :query, :raw_json_result, :place_name, :geoname
+  attr_reader :place, :time, :images, :result, :query, :raw_json_result, :place_name
   
   def initialize(params = {})
-    @place = params[:place] or params["place"]
+    @place = params[:place] or params[:id]
     @time = params.delete(:time)
   end
   
@@ -15,14 +15,14 @@ class Travel
     Rails.logger.error "Query result: \n#{raw_json_result}"
     processed_result = process_result(raw_json_result)
     extract_images(processed_result)
-    extract_abstract(processed_result)
+    # extract_abstract(processed_result)
     self
   end
   
   def place_id
     if geoname
       @place_name = geoname.name
-      return @geoname.place_id
+      return geoname.place_id
     else
       return nil
     end
@@ -49,7 +49,7 @@ class Travel
   end
   
   def geoname
-    @geoname ||= Geoname.where("name LIKE ?", "%#{@place}%").first
+    @geoname ||= @place and Geoname.where("name LIKE ?", "#{@place}").first
   end
   
   def query_abstract_from_dbpedia(geoname)

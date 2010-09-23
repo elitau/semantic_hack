@@ -1,0 +1,2 @@
+module GeonameHelper
+end
