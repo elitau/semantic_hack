@@ -1,5 +1,5 @@
 GEM
-  remote: http://gemcutter.org/
+  remote: http://rubygems.org/
   specs:
     abstract (1.0.0)
     actionmailer (3.0.0)
@@ -86,6 +86,6 @@ DEPENDENCIES
   couch_potato
   flickraw
   mysql
-  rails
+  rails (= 3.0.0)
   validatable
   will_paginate
