@@ -28,11 +28,10 @@ class TravelsController < ApplicationController
   # GET /travels/new
   # GET /travels/new.xml
   def new
-    @travel = Travel.new
+    geoname = Geoname.find(rand(Geoname.count))
 
     respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @travel }
+      format.html { redirect_to travel_path(geoname.name)}
     end
   end
 

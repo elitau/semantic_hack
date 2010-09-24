@@ -57,7 +57,12 @@ class Travel
   # end
   # 
   def geoname
-    @geoname ||= @place and Geoname.where("name LIKE ?", "#{@place}").first
+    @geoname ||= if @place
+      name = Geoname.where("name LIKE ?", "#{@place}").first
+      name = Geoname.where("name LIKE ?", "%#{@place}%").first unless name
+      name
+    end
+    
   end
   # 
   # DBPEDIA_PROPERTIES = {
