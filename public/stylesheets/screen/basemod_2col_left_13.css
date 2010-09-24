@@ -39,4 +39,11 @@
 
   #col3 { margin-left:25%; margin-right:0; }
   #col3_content { padding:10px 20px 10px 10px; }
+	#header {
+		background-image: url("/images/fh_logo.png");
+		height: 55px;
+		background-repeat: no-repeat;
+    background-position: 0 0;
+		padding-left: 120px;
+	}
 }
