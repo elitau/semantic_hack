@@ -39,23 +39,11 @@ class Travel
       Photo.new(
         :title => hash_image["image_title"]["value"],
         :thumbnail_url => hash_image["depiction"]["value"],
-        :url => hash_image["image"]["value"]
+        :url => hash_image["page"]["value"]
       )
     end
   end
-  
-  # def wikipedia_link
-  #   @wikipedia_link ||= extract_value(query_data_from_dbpedia, "wikipedia_link")
-  # end
-  # 
-  # def abstract
-  #   @abstract ||= extract_value(query_data_from_dbpedia, "comment")
-  # end
-  # 
-  # def homepage_of_city
-  #   @homepage_of_city ||= extract_value(query_data_from_dbpedia, "homepage_of_city")
-  # end
-  # 
+
   def geoname
     @geoname ||= if @place
       name = Geoname.where("name LIKE ?", "#{@place}").first
@@ -146,6 +134,7 @@ class Travel
        flickr:#{place_id} flickr:hasImage ?image .
      	 ?image flickr:hasName ?image_title .
      	 ?image foaf:depiction ?depiction .
+     	 ?image foaf:page ?page .
      	 flickr:#{place_id} owl:sameAs ?other_place .
      	 OPTIONAL { 
      	 	?other_place owl:sameAs ?third_place .
